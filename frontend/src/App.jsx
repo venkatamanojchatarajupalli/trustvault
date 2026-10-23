@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const API_URL = 'http://127.0.0.1:8000'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+
 
 function getErrorMessage(data, fallback) {
   if (Array.isArray(data?.detail)) {
@@ -56,6 +58,12 @@ function App() {
   )
   const [documents, setDocuments] = useState([])
   const [auditEvents, setAuditEvents] = useState([])
+  const [incidents, setIncidents] = useState([])
+  const [incidentsLoading, setIncidentsLoading] = useState(false)
+  const [incidentsError, setIncidentsError] = useState('')
+  const [incidentDocumentId, setIncidentDocumentId] = useState('')
+  const [incidentDescription, setIncidentDescription] = useState('')
+  const [incidentSubmitting, setIncidentSubmitting] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
   const [dataLoading, setDataLoading] = useState(false)
   const [activeSection, setActiveSection] = useState('Dashboard')
@@ -69,7 +77,11 @@ function App() {
   const [sharingDocumentId, setSharingDocumentId] = useState(null)
   const [permissionsLoadingId, setPermissionsLoadingId] = useState(null)
   const [revokingPermissionId, setRevokingPermissionId] = useState(null)
-
+  const sharedDocuments = documents.filter(
+    document =>
+      currentUser &&
+      Number(document.owner_id) !== Number(currentUser.id)
+  )
   async function apiRequest(path, options = {}) {
     const token = sessionStorage.getItem('trustvault_token')
 
@@ -185,6 +197,72 @@ function App() {
 
     setDataLoading(false)
   }
+  async function loadIncidents() {
+  setIncidentsLoading(true)
+  setIncidentsError('')
+
+  try {
+    const { data } = await apiRequest('/api/admin/incidents')
+
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.items)
+        ? data.items
+        : []
+
+    setIncidents(list)
+  } catch (error) {
+    setIncidents([])
+    setIncidentsError(error.message || 'Could not load incidents.')
+  } finally {
+    setIncidentsLoading(false)
+  }
+}
+async function handleCreateIncident(event) {
+  event.preventDefault()
+  setIncidentsError('')
+
+  const documentId = Number(incidentDocumentId)
+
+  if (!Number.isInteger(documentId) || documentId <= 0) {
+    setIncidentsError('Enter a valid positive document ID.')
+    return
+  }
+
+  if (incidentDescription.trim().length < 5) {
+    setIncidentsError('Description must contain at least 5 characters.')
+    return
+  }
+
+  setIncidentSubmitting(true)
+
+  try {
+    await apiRequest('/api/admin/incidents', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        document_id: documentId,
+        description: incidentDescription.trim(),
+      }),
+    })
+
+    setIncidentDocumentId('')
+    setIncidentDescription('')
+    await loadIncidents()
+    setNotice('Incident reported successfully.')
+  } catch (error) {
+    setIncidentsError(error.message || 'Could not report the incident.')
+  } finally {
+    setIncidentSubmitting(false)
+  }
+}
+useEffect(() => {
+  if (activeSection === 'Incidents' && isSignedIn) {
+    loadIncidents()
+  }
+}, [activeSection, isSignedIn])
 
   useEffect(() => {
     if (isSignedIn) {
@@ -845,7 +923,10 @@ function App() {
                               {formatDate(document.created_at || document.uploaded_at)}
                             </p>
                             {document.id != null && (
-                              <div className="document-share-tools">
+  <>
+    {currentUser &&
+      Number(document.owner_id) === Number(currentUser.id) && (
+        <div className="document-share-tools">
                                 <form
                                   className="share-form"
                                   onSubmit={event => {
@@ -945,6 +1026,8 @@ function App() {
                                 )}
                               </div>
                             )}
+                          </>
+                        )}
                           </div>
                           {document.id != null && (
                             <button
@@ -954,6 +1037,7 @@ function App() {
                               Download
                             </button>
                           )}
+
                         </div>
                       ))}
                     </div>
@@ -1025,45 +1109,156 @@ function App() {
             </article>
           </section>
         )}
+{activeSection === 'Shared with me' && (
+  <section className="content-section">
+    <div className="section-heading">
+      <div>
+        <span className="eyebrow">DOCUMENT ACCESS</span>
+        <h2>Shared with me</h2>
+      </div>
+    </div>
+    {!isSignedIn ? (
+      <article className="panel empty-state">
+        <strong>Sign in to view shared documents</strong>
+        <button
+          className="button button-primary"
+          onClick={() => setAuthMode('login')}
+        >
+          Sign in
+        </button>
+      </article>
+    ) : sharedDocuments.length === 0 ? (
+      <article className="panel empty-state">
+        <strong>No documents have been shared with you yet</strong>
+        <p>
+          Documents shared with your account will appear here.
+        </p>
+        <button
+          className="button button-outline"
+          onClick={() => selectSection('Documents')}
+        >
+          Go to documents
+        </button>
+      </article>
+    ) : (
+      <div className="document-grid">
+        {sharedDocuments.map(document => (
+          <article className="panel" key={document.id}>
+            <span className="eyebrow">SHARED DOCUMENT</span>
+            <h3>{document.title}</h3>
+            <p>Document ID: {document.id}</p>
+            <p>Owner ID: {document.owner_id}</p>
+            {document.created_at && (
+              <p>Added: {formatDate(document.created_at)}</p>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+)}
+{activeSection === 'Incidents' && (
+  <section className="content-section">
+    <div className="section-heading">
+      <div>
+        <span className="eyebrow">SECURITY RESPONSE</span>
+        <h2>Incidents</h2>
+      </div>
+      <button
+        className="button button-outline"
+        onClick={loadIncidents}
+      >
+        Refresh
+      </button>
+        </div>
 
-        {activeSection === 'Shared with me' && (
-          <section className="content-section">
-            <div className="section-heading">
-              <div>
-                <span className="eyebrow">DOCUMENT ACCESS</span>
-                <h2>Shared with me</h2>
-              </div>
-            </div>
-            <article className="panel empty-state">
-              <strong>Shared-document view not connected yet</strong>
-              <p>
-                The backend has document permission endpoints. We need to confirm
-                their response format before displaying shared items accurately.
-              </p>
-              <button className="button button-outline" onClick={() => selectSection('Documents')}>
-                Go to documents
-              </button>
-            </article>
-          </section>
-        )}
+    <article className="panel">
+      <h3>Report a security incident</h3>
+      <p>Record a security concern associated with a document.</p>
 
-        {activeSection === 'Incidents' && (
-          <section className="content-section">
+      <form onSubmit={handleCreateIncident}>
+        <label htmlFor="incident-document-id">Document ID</label>
+        <input
+          id="incident-document-id"
+          type="number"
+          min="1"
+          required
+          value={incidentDocumentId}
+          onChange={(event) => setIncidentDocumentId(event.target.value)}
+          placeholder="Enter document ID"
+        />
+
+        <label htmlFor="incident-description">Incident description</label>
+        <textarea
+          id="incident-description"
+          required
+          minLength="5"
+          maxLength="5000"
+          value={incidentDescription}
+          onChange={(event) => setIncidentDescription(event.target.value)}
+          placeholder="Describe the security incident"
+          rows="4"
+        />
+
+        <button
+          className="button"
+          type="submit"
+          disabled={incidentSubmitting}
+        >
+          {incidentSubmitting ? 'Reporting...' : 'Report incident'}
+        </button>
+      </form>
+    </article>
+
+    {incidentsError && (
+      <article className="panel">
+        <strong>Unable to load incidents</strong>
+        <p>{incidentsError}</p>
+      </article>
+    )}
+
+    {incidentsLoading && (
+      <article className="panel">
+        <p>Loading incidents...</p>
+      </article>
+    )}
+
+    {!incidentsLoading && !incidentsError && incidents.length === 0 && (
+      <article className="panel empty-state">
+        <strong>No incidents recorded</strong>
+        <p>There are currently no incident records to display.</p>
+      </article>
+    )}
+
+    {!incidentsLoading && !incidentsError && incidents.length > 0 && (
+      <div className="document-grid">
+        {incidents.map((incident) => (
+          <article className="panel" key={incident.id}>
             <div className="section-heading">
-              <div>
-                <span className="eyebrow">SECURITY RESPONSE</span>
-                <h2>Incidents</h2>
-              </div>
+              <strong>Incident #{incident.id}</strong>
+              <span className="status-badge">
+                {incident.status}
+              </span>
             </div>
-            <article className="panel empty-state">
-              <strong>Incident view not connected yet</strong>
-              <p>
-                Incident-management endpoints need to be confirmed before this
-                section can display live records.
-              </p>
-            </article>
-          </section>
-        )}
+
+            <p>{incident.description}</p>
+
+            <div className="document-meta">
+              <span>Document ID: {incident.document_id}</span>
+              <span>Reported by: {incident.reported_by}</span>
+              <span>
+                Detected:{' '}
+                {incident.detected_at
+                  ? new Date(incident.detected_at).toLocaleString()
+                  : 'Unknown'}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+)}
 
         {notice && (
           <div className="notice" role="status">

@@ -1,4 +1,4 @@
-
+﻿
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -52,6 +52,9 @@ def ensure_another_active_admin(
             status_code=409,
             detail="Cannot remove the last active administrator",
         )
+class IncidentCreateRequest(BaseModel):
+    document_id: int
+    description: str = Field(min_length=5, max_length=5000)
 
 
 @router.get("/users", response_model=list[UserResponse])
@@ -61,7 +64,6 @@ def list_users(
     return db.scalars(
         select(User).order_by(User.id)
     ).all()
-
 
 @router.patch(
     "/users/{user_id}/role",

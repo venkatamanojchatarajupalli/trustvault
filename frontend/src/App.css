@@ -937,3 +937,212 @@ footer span {
     padding: 26px 22px;
   }
 }
+
+/* Incident reporting form layout */
+.content-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content-section form label {
+  display: block;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+
+.content-section form input,
+.content-section form textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.content-section form input {
+  min-height: 44px;
+}
+
+.content-section form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+
+.content-section form input:focus,
+.content-section form textarea:focus {
+  outline: 2px solid #64748b;
+  outline-offset: 2px;
+}
+
+.content-section form button {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+/* Compact TrustVault incident cards */
+.content-section .panel {
+  padding: 20px;
+  gap: 12px;
+}
+
+.content-section .panel h3 {
+  margin: 0 0 8px;
+}
+
+.content-section .panel p {
+  margin: 6px 0;
+}
+
+.content-section .panel small {
+  line-height: 1.5;
+}
+
+/* Keep incident form compact */
+.content-section form textarea {
+  min-height: 80px;
+}
+
+/* Compact incident reporting form */
+.content-section form:not(.auth-form) {
+  gap: 8px;
+}
+
+.content-section form:not(.auth-form) input {
+  min-height: 40px;
+  padding: 8px 12px;
+}
+
+.content-section form:not(.auth-form) textarea {
+  height: 80px;
+  min-height: 80px;
+  padding: 8px 12px;
+}
+
+/* Improve spacing between incident cards */
+.content-section .document-grid {
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Keep incident details readable */
+.content-section .document-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+.content-section .document-grid .panel > p {
+  margin: 10px 0;
+}
+
+/* Keep incident history cards close to their content */
+.content-section .document-grid {
+  align-items: start;
+  gap: 12px;
+}
+
+.content-section .document-grid .panel {
+  align-self: start;
+  padding: 16px;
+  gap: 8px;
+  min-height: 0;
+  height: fit-content;
+}
+
+.content-section .document-grid .panel .section-heading {
+  margin-bottom: 4px;
+}
+
+.content-section .document-grid .panel > p {
+  margin: 4px 0;
+}
+
+.content-section .document-grid .document-meta {
+  margin-top: 8px;
+  gap: 4px;
+}
+
+/* Slightly tighter incident history spacing */
+.content-section .document-grid {
+  gap: 10px;
+}
+
+.content-section .document-grid .panel {
+  padding: 14px;
+  gap: 6px;
+}
+
+.content-section .document-grid .panel > p {
+  margin: 3px 0;
+}
+
+.content-section .document-grid .document-meta {
+  margin-top: 6px;
+  gap: 3px;
+}
+
+/* Compact incident history metadata */
+.content-section .document-grid .document-meta {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 4px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.content-section .document-grid .document-meta span {
+  font-size: 13px;
+}
+
+/* Professional incident history card layout */
+.content-section .document-grid .panel {
+  padding: 18px 22px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Keep incident title and status on the same row */
+.content-section .document-grid .panel .section-heading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+}
+
+/* Align the incident description with the title */
+.content-section .document-grid .panel > p {
+  text-align: left;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Present metadata in a clean, consistent row */
+.content-section .document-grid .document-meta {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px 20px;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+.content-section .document-grid .document-meta span {
+  font-size: 13px;
+  color: #64748b;
+}
