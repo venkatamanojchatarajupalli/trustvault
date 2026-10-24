@@ -1,16 +1,25 @@
 # TrustVault — Secure Document Sharing and Leak Investigation
 
-TrustVault is a secure document-sharing platform designed to protect private documents through authentication, access controls, and audit logging. It helps users share documents with authorized recipients and investigate document-related activity.
+TrustVault is a secure document-sharing platform designed to protect private documents through authentication, role-based access controls, permission management, and audit logging. It helps users share documents with authorized recipients and review document-related activity.
+
+## Live Demo
+
+- **Frontend:** https://trustvault-hrdv5ogvn-trust-vault1.vercel.app/
+- **Backend API:** https://trustvault-api-v92o.onrender.com
+- **API documentation:** https://trustvault-api-v92o.onrender.com/docs
+- **GitHub repository:** https://github.com/venkatamanojchatarajupalli/trustvault
 
 ## Features
 
-- **User authentication:** Register and log in securely.
-- **Document management:** Upload, list, view, and download documents.
-- **Access control:** Share documents with specific users and control read/edit permissions.
-- **Permission revocation:** Revoke previously granted document access.
-- **Audit logging:** Record document-related actions for accountability and investigation.
-- **Activity tracking:** Review recorded activities through the application interface.
-- **API documentation:** Explore and test backend endpoints using FastAPI Swagger UI.
+- User registration and login
+- Document upload and listing
+- Document sharing with read/edit permissions
+- Permission revocation
+- Audit logging and activity tracking
+- Incident records for document-related investigations
+- FastAPI Swagger UI for exploring backend endpoints
+
+**Current limitation:** Document downloads on the deployed application currently return a “Document file not found” error. Persistent document storage and download behavior still need to be completed and verified for production.
 
 ## Technology Stack
 
@@ -18,7 +27,8 @@ TrustVault is a secure document-sharing platform designed to protect private doc
 - Python
 - FastAPI
 - SQLAlchemy
-- SQLite
+- PostgreSQL for the deployed database
+- SQLite for the local database
 - Pytest
 
 **Frontend**
@@ -33,6 +43,7 @@ trustvault/
 ├── backend/
 │   ├── app/
 │   ├── private_uploads/
+│   ├── migrate_sqlite_to_postgres.py
 │   └── ...
 ├── frontend/
 │   ├── src/
@@ -41,45 +52,42 @@ trustvault/
 └── README.md
 ```
 
-The `private_uploads` directory and local database contain runtime data and should not be committed to the public repository.
+The `private_uploads` directory and local database contain runtime data. Do not commit private documents, credentials, or secret environment files.
 
 ## Prerequisites
 
-- Python installed
-- Node.js and npm installed
-- Git installed
+- Python
+- Node.js and npm
+- Git
 
 ## Run the Backend Locally
 
-Open PowerShell in the project directory and run:
+From the project root in PowerShell:
 
 ```powershell
 cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-The backend API will be available at:
+The local API is available at `http://127.0.0.1:8000`.
 
-- API base URL: http://127.0.0.1:8000
-- Swagger documentation: http://127.0.0.1:8000/docs
+Swagger documentation: `http://127.0.0.1:8000/docs`
 
-Create and configure the required environment variables before running the application in a fresh environment. Never commit actual secret keys or credentials.
+Configure any required environment variables before running in a fresh environment. Do not publish database URLs, passwords, secret keys, or other credentials.
 
 ## Run the Frontend Locally
 
-Open a second PowerShell terminal and run:
+Open a second PowerShell terminal from the project root:
 
 ```powershell
 cd frontend
-$env:Path = "C:\Program Files\nodejs;$env:Path"
-& "C:\Program Files\nodejs\npm.cmd" run dev
+npm install
+npm run dev
 ```
 
-Open the local URL printed by Vite in the terminal. In the current development setup, the frontend runs at:
-
-http://localhost:5175/
-
-Keep the backend running while using the frontend.
+Open the local URL printed by Vite. Keep the backend running while testing the frontend.
 
 ## Run Backend Tests
 
@@ -90,20 +98,18 @@ cd backend
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-## Security Notes
+## Security and Deployment Notes
 
-- Keep environment files, secret keys, local databases, virtual environments, and private uploaded documents out of version control.
-- Use a strong, unique secret key in each deployment environment.
-- Configure production CORS, HTTPS, authentication, and storage permissions appropriately before public deployment.
-- Ensure uploaded documents are stored in persistent, access-controlled storage in production.
-- Do not use development server settings as a substitute for production deployment configuration.
+- Use strong secret keys and keep credentials out of version control.
+- Configure production CORS, HTTPS, authentication, and access controls appropriately.
+- Store uploaded documents in persistent, access-controlled storage for production use.
+- Verify document downloads and permissions in the deployed environment.
+- Never commit private uploaded files, local databases containing user data, or environment files.
+
+## Project Goal
+
+TrustVault aims to provide secure document sharing with controlled access, traceable activity, and support for investigating document-related incidents.
 
 ## Current Status
 
-The project has a working local backend and frontend, including document management, sharing permissions, access revocation, and activity/audit views. Public production deployment and its storage configuration must be verified separately.
-
-## Project
-
-**Name:** TrustVault — Secure Document Sharing and Leak Investigation
-
-**Goal:** Provide secure document sharing with controlled access, traceable activity, and support for investigating document-related incidents.
+The frontend and backend are deployed, and the deployed admin login and dashboard have been verified. The local SQLite data was migrated to PostgreSQL, with row counts verified across five tables. Some production behavior, including document downloads and persistent file storage, remains unfinished.
