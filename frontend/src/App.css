@@ -1146,3 +1146,808 @@ footer span {
   font-size: 13px;
   color: #64748b;
 }
+
+/* =========================================
+   TRUSTVAULT — PROFESSIONAL DOCUMENTS LAYOUT
+   Append at the bottom of App.css
+========================================= */
+
+.documents-panel {
+  width: calc(100% - 48px);
+  max-width: 1120px;
+  margin: 20px auto;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.documents-panel .panel-heading {
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.documents-panel .panel-heading h3 {
+  color: #183449;
+  font-size: 16px;
+}
+
+.documents-panel .panel-heading p {
+  font-size: 12px;
+}
+
+/* Compact document rows */
+.documents-panel .activity-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid #eaf0f2;
+}
+
+.documents-panel .activity-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.documents-panel .activity-row > div {
+  min-width: 0;
+}
+
+.documents-panel .activity-row strong {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.documents-panel .activity-row p {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+/* Prevent document action buttons from stretching */
+.documents-panel .activity-row button {
+  width: auto;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* Sharing and permission controls */
+.documents-panel form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  width: 100%;
+  max-width: 720px;
+  margin: 16px auto 20px;
+}
+
+.documents-panel form label {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.documents-panel form input[type="email"],
+.documents-panel form input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid #d7e2e6;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+/* Small, properly aligned editing checkbox */
+.documents-panel input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  padding: 0;
+  margin: 0 7px 0 0;
+  accent-color: #126b59;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.documents-panel form button {
+  width: auto;
+  min-height: 38px;
+  align-self: end;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* Keep permission management compact */
+.documents-panel .document-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.documents-panel .document-meta span {
+  font-size: 11px;
+  color: #71838d;
+}
+
+/* Responsive dashboard */
+@media (max-width: 780px) {
+  .documents-panel {
+    width: calc(100% - 24px);
+    padding: 16px;
+    margin: 12px auto;
+  }
+
+  .documents-panel .activity-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .documents-panel .activity-row > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .documents-panel form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .documents-panel form button {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 420px) {
+  .documents-panel {
+    padding: 12px;
+  }
+
+  .documents-panel .activity-row {
+    gap: 8px;
+  }
+
+  .documents-panel .activity-row strong {
+    font-size: 12px;
+  }
+}
+
+/* =====================================
+   TrustVault document management layout
+===================================== */
+
+.documents-panel {
+  width: calc(100% - 48px);
+  max-width: 1120px;
+  margin: 20px auto;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.documents-header h3 {
+  margin: 0;
+  font: 800 16px 'Manrope', sans-serif;
+  color: #183449;
+}
+
+.documents-header p {
+  margin: 6px 0 0;
+  color: #82919a;
+  font-size: 12px;
+}
+
+.documents-count,
+.document-owner-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eaf5f1;
+  color: #126b59;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.documents-list {
+  display: grid;
+  gap: 12px;
+}
+
+.document-item {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #e6edf0;
+  border-radius: 11px;
+  background: #fff;
+  transition: border-color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+.document-item:hover {
+  border-color: #cbded6;
+  box-shadow: 0 4px 14px #173b2e08;
+}
+
+.document-summary {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.document-file-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #eaf5f1;
+  color: #126b59;
+  font-size: 19px;
+}
+
+.document-info {
+  min-width: 0;
+}
+
+.document-title-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.document-title-line > strong {
+  color: #203b49;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.document-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+  margin-top: 6px;
+  color: #81919a;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.document-download {
+  padding: 9px 12px;
+  font-size: 11px;
+}
+
+/* Sharing controls are contained within each document */
+.document-management {
+  margin: 15px 0 0 50px;
+  padding-top: 14px;
+  border-top: 1px solid #edf1f3;
+}
+
+
+.documents-panel .share-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 12px;
+  width: 100%;
+  max-width: 720px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+
+.documents-panel .share-email-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #526875;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.documents-panel .share-email-field input[type="email"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid #dce5e9;
+  border-radius: 7px;
+  background: #fbfcfd;
+  color: #203b49;
+  font-size: 12px;
+}
+
+.documents-panel .share-edit-option {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  gap: 6px;
+  margin: 0;
+  padding-top: 19px;
+  color: #526875;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.documents-panel .share-edit-option input[type="checkbox"] {
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  display: inline-block;
+  flex: 0 0 15px;
+  width: 15px !important;
+  height: 15px !important;
+  min-height: 15px !important;
+  margin: 0;
+  padding: 0;
+  accent-color: #126b59;
+}
+
+.documents-panel .share-submit {
+  height: 38px;
+  min-height: 38px;
+  padding: 0 14px;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.document-access-actions {
+  margin-top: 12px;
+}
+
+.document-access-actions .button {
+  padding: 8px 12px;
+  font-size: 11px;
+}
+
+/* Permission list */
+.documents-panel .permission-list {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px;
+  border: 1px solid #e7edf0;
+  border-radius: 9px;
+  background: #f9fbfb;
+}
+
+.permission-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #304c59;
+  font-size: 12px;
+}
+
+.permission-list-heading span {
+  color: #71838d;
+  font-size: 10px;
+}
+
+.documents-panel .permission-empty {
+  margin: 8px 0 0;
+  color: #81919a;
+  font-size: 11px;
+}
+
+.documents-panel .permission-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px 0;
+  border-top: 1px solid #e9eff1;
+}
+
+.permission-user-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #eaf5f1;
+  color: #126b59;
+}
+
+.documents-panel .permission-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.documents-panel .permission-user-info strong {
+  color: #304c59;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.documents-panel .permission-user-info p {
+  margin: 4px 0 0;
+  color: #81919a;
+  font-size: 10px;
+}
+
+.documents-panel .revoke-button {
+  padding: 7px 10px;
+  font-size: 10px;
+}
+
+/* Responsive layout */
+@media (max-width: 900px) {
+  .documents-panel .share-form {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .documents-panel .share-email-field {
+    grid-column: 1 / -1;
+  }
+
+  .documents-panel .share-edit-option {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .documents-panel {
+    width: calc(100% - 24px);
+    padding: 14px;
+  }
+
+  .document-item {
+    padding: 12px;
+  }
+
+  .document-summary {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .document-file-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .document-download {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .document-management {
+    margin-left: 0;
+  }
+
+  .documents-panel .share-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .documents-panel .share-email-field {
+    grid-column: auto;
+  }
+
+  .documents-panel .share-edit-option {
+    justify-self: start;
+  }
+
+  .documents-panel .share-submit {
+    justify-self: start;
+  }
+
+  .documents-panel .permission-item {
+    flex-wrap: wrap;
+  }
+
+  .documents-panel .revoke-button {
+    margin-left: 40px;
+  }
+}
+
+
+.documents-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin: 20px 0;
+  box-sizing: border-box;
+}
+
+.document-search {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  border: 1px solid #d5e1e8;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #183344;
+  font: inherit;
+}
+
+
+.document-page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  color: #526779;
+}
+
+.document-page-size select {
+  min-height: 40px;
+  padding: 6px 30px 6px 10px;
+  border: 1px solid #d5e1e8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #183344;
+  font: inherit;
+}
+
+.document-management {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.share-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.share-email-field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  text-align: left;
+  color: #29485a;
+}
+
+.share-email-field input[type="email"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #d5e1e8;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #183344;
+  font: inherit;
+}
+
+.share-email-field input[type="email"]::placeholder {
+  color: #718596;
+  opacity: 1;
+}
+
+.share-email-field input[type="email"]:focus {
+  outline: 2px solid #8bc9bd;
+  outline-offset: 1px;
+  border-color: #147765;
+}
+
+.share-edit-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 1px solid #d5e1e8;
+  border-radius: 9px;
+  background: #f7fafb;
+  color: #29485a;
+  white-space: nowrap;
+}
+
+.share-edit-option input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #147765;
+}
+
+.share-submit {
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .documents-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .document-search {
+    max-width: none;
+    flex-basis: auto;
+  }
+
+  .share-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .share-edit-option,
+  .share-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* TrustVault: compact document dashboard */
+.documents-list {
+  width: 100%;
+  max-width: 940px;
+  margin: 20px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.document-item {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 18px 22px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.document-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: nowrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e6edf1;
+}
+
+.document-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-title-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.document-download {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Keep sharing controls on one horizontal row */
+.document-management {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.share-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto auto auto;
+  align-items: end;
+  gap: 12px;
+  width: 100%;
+}
+
+.share-email-field {
+  min-width: 0;
+}
+
+.share-email-field input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.share-edit-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 12px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.share-submit,
+.manage-access-button {
+  min-height: 46px;
+  white-space: nowrap;
+}
+
+.permission-list {
+  margin-top: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Keep the cards and controls usable on smaller screens */
+@media (max-width: 900px) {
+  .documents-list {
+    max-width: 100%;
+  }
+
+  .document-item {
+    padding: 16px;
+  }
+
+  .share-form {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .share-email-field {
+    grid-column: 1 / -1;
+  }
+
+  .share-edit-option {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .document-summary {
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .document-download {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .share-form {
+    grid-template-columns: 1fr;
+  }
+
+  .share-email-field {
+    grid-column: auto;
+  }
+
+  .share-edit-option,
+  .share-submit,
+  .manage-access-button {
+    width: 100%;
+  }
+}

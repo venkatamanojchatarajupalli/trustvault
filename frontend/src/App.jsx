@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
-
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  'https://trustvault-api-v92o.onrender.com'
 
 function getErrorMessage(data, fallback) {
   if (Array.isArray(data?.detail)) {
@@ -77,6 +77,9 @@ function App() {
   const [sharingDocumentId, setSharingDocumentId] = useState(null)
   const [permissionsLoadingId, setPermissionsLoadingId] = useState(null)
   const [revokingPermissionId, setRevokingPermissionId] = useState(null)
+  const [documentSearch, setDocumentSearch] = useState('')
+  const [documentPage, setDocumentPage] = useState(1)
+  const [documentsPerPage, setDocumentsPerPage] = useState(5)
   const sharedDocuments = documents.filter(
     document =>
       currentUser &&
@@ -507,6 +510,32 @@ useEffect(() => {
 
   const recentDocuments = [...documents].slice(0, 5)
   const recentEvents = [...auditEvents].slice(0, 5)
+  const filteredDocuments = documents.filter(document => {
+  const query = documentSearch.trim().toLowerCase()
+
+  if (!query) return true
+
+  return (
+    String(getDocumentName(document)).toLowerCase().includes(query) ||
+    String(document.id ?? '').toLowerCase().includes(query) ||
+    String(document.owner_id ?? '').toLowerCase().includes(query)
+  )
+})
+
+const totalDocumentPages = Math.max(
+  1,
+  Math.ceil(filteredDocuments.length / documentsPerPage)
+)
+
+const currentDocumentPage = Math.min(
+  documentPage,
+  totalDocumentPages
+)
+
+const paginatedDocuments = filteredDocuments.slice(
+  (currentDocumentPage - 1) * documentsPerPage,
+  currentDocumentPage * documentsPerPage
+)
 
   return (
     <div className="app-shell">
@@ -892,157 +921,255 @@ useEffect(() => {
                   </form>
                 </article>
 
-                <article className="panel documents-panel">
-                  <div className="panel-heading">
-                    <div>
-                      <h3>Your documents</h3>
-                      <p>{documents.length} document(s) returned by the API</p>
-                    </div>
-                  </div>
+<article className="panel documents-panel">
+  <div className="documents-header">
+    <div>
+      <h3>Your documents</h3>
+      <p>{documents.length} document(s) returned by the API</p>
+    </div>
+    <span className="documents-count">
+      {documents.length} files
+    </span>
+  </div>
 
-                  {dataLoading ? (
-                    <p>Loading documents…</p>
-                  ) : documents.length === 0 ? (
-                    <div className="empty-state">
-                      <div className="empty-icon">▤</div>
-                      <strong>No documents found</strong>
-                      <p>Upload a document using the form above.</p>
-                    </div>
-                  ) : (
-                    <div className="live-list">
-                      {documents.map((document, index) => (
-                        <div className="activity-row" key={document.id ?? index}>
-                          <span className="activity-icon">▤</span>
-                          <div className="document-share-content">
-                            <strong>{getDocumentName(document)}</strong>
-                            {currentUser && Number(document.owner_id) === Number(currentUser.id) && (
-                              <span style={{ display: 'inline-flex', marginLeft: '8px', padding: '3px 8px', borderRadius: '999px', background: '#ede9fe', color: '#5b21b6', fontSize: '11px', fontWeight: 700, verticalAlign: 'middle' }}>Owner</span>
-                            )}
-                            <p>
-                              ID: {document.id ?? 'Unavailable'} ·{' '}
-                              {formatDate(document.created_at || document.uploaded_at)}
-                            </p>
-                            {document.id != null && (
-  <>
-    {currentUser &&
-      Number(document.owner_id) === Number(currentUser.id) && (
-        <div className="document-share-tools">
-                                <form
-                                  className="share-form"
-                                  onSubmit={event => {
-                                    event.preventDefault()
-                                    handleShare(document)
-                                  }}
-                                >
-                                  <label>
-                                    Share with email
-                                    <input
-                                      type="email"
-                                      value={shareEmails[document.id] || ''}
-                                      onChange={event =>
-                                        setShareEmails(current => ({
-                                          ...current,
-                                          [document.id]: event.target.value,
-                                        }))
-                                      }
-                                      placeholder="recipient@example.com"
-                                      required
-                                    />
-                                  </label>
-                                  <label className="share-edit-option">
-                                    <input
-                                      type="checkbox"
-                                      checked={Boolean(shareEditAccess[document.id])}
-                                      onChange={event =>
-                                        setShareEditAccess(current => ({
-                                          ...current,
-                                          [document.id]: event.target.checked,
-                                        }))
-                                      }
-                                    />
-                                    Allow editing
-                                  </label>
-                                  <button
-                                    className="button button-primary"
-                                    type="submit"
-                                    disabled={sharingDocumentId === document.id}
-                                  >
-                                    {sharingDocumentId === document.id ? 'Sharing…' : 'Share'}
-                                  </button>
-                                </form>
-                                <button
-                                  className="button button-outline"
-                                  type="button"
-                                  onClick={() => {
-                                    if (permissionsVisible[document.id]) {
-                                      setPermissionsVisible(current => ({
-                                        ...current,
-                                        [document.id]: false,
-                                      }))
-                                    } else {
-                                      loadPermissions(document)
-                                    }
-                                  }}
-                                  disabled={permissionsLoadingId === document.id}
-                                >
-                                  {permissionsLoadingId === document.id
-                                    ? 'Loading access…'
-                                    : permissionsVisible[document.id]
-                                      ? 'Hide access'
-                                      : 'Manage access'}
-                                </button>
-                                {permissionsVisible[document.id] && (
-                                  <div className="permission-list">
-                                    <strong>Document permissions</strong>
-                                    {(permissionsByDocument[document.id] || []).length === 0 ? (
-                                      <p>No permission records returned.</p>
-                                    ) : (
-                                      (permissionsByDocument[document.id] || []).map(permission => {
-                                        const isRevoked = Boolean(permission.revoked_at)
-                                        return (
-                                          <div className="permission-item" key={permission.id}>
-                                            <div>
-                                              <strong>User ID {permission.user_id}</strong>
-                                              <p>
-                                                {permission.can_edit ? 'Read and edit' : 'Read only'}
-                                                {' · '}{isRevoked ? 'Revoked' : 'Active'}
-                                              </p>
-                                            </div>
-                                            {!isRevoked && (
-                                              <button
-                                                className="button button-outline"
-                                                type="button"
-                                                onClick={() => handleRevokePermission(document, permission)}
-                                                disabled={revokingPermissionId === permission.id}
-                                              >
-                                                {revokingPermissionId === permission.id ? 'Revoking…' : 'Revoke'}
-                                              </button>
-                                            )}
-                                          </div>
-                                        )
-                                      })
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </>
-                        )}
-                          </div>
-                          {document.id != null && (
-                            <button
-                              className="button button-outline"
-                              onClick={() => handleDownload(document)}
-                            >
-                              Download
-                            </button>
-                          )}
+  {dataLoading ? (
+    <p>Loading documents…</p>
+  ) : documents.length === 0 ? (
+    <div className="empty-state">
+      <div className="empty-icon">▤</div>
+      <strong>No documents found</strong>
+      <p>Upload a document using the form above.</p>
+    </div>
+  ) : (
+<>
+<div className="documents-toolbar">
+  <input
+    className="document-search"
+    type="search"
+    placeholder="Search documents by name, ID, or owner ID..."
+    value={documentSearch}
+    onChange={event => {
+      setDocumentSearch(event.target.value)
+      setDocumentPage(1)
+    }}
+  />
 
-                        </div>
-                      ))}
-                    </div>
+  <label className="document-page-size">
+    Show
+    <select
+      value={documentsPerPage}
+      onChange={event => {
+        setDocumentsPerPage(Number(event.target.value))
+        setDocumentPage(1)
+      }}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={20}>20</option>
+    </select>
+    entries
+  </label>
+</div>
+
+<div className="documents-list">
+      {paginatedDocuments.map((document, index) => {
+        const isOwner =
+          currentUser &&
+          Number(document.owner_id) === Number(currentUser.id)
+
+        return (
+          <article
+            className="document-item"
+            key={document.id ?? index}
+          >
+            <div className="document-summary">
+              <span className="document-file-icon">▤</span>
+
+              <div className="document-info">
+                <div className="document-title-line">
+                  <strong>{getDocumentName(document)}</strong>
+
+                  {isOwner && (
+                    <span className="document-owner-badge">
+                      Owner
+                    </span>
                   )}
-                </article>
+                </div>
+                <div className="document-details">
+                  <span>ID: {document.id ?? 'Unavailable'}</span>
+                  <span>
+                    {formatDate(
+                      document.created_at || document.uploaded_at
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {document.id != null && (
+                <button
+                  className="button button-outline document-download"
+                  type="button"
+                  onClick={() => handleDownload(document)}
+                >
+                  Download ↓
+                </button>
+              )}
+            </div>
+
+            {document.id != null && isOwner && (
+  <>
+             
+<div className="document-management">
+  <form
+    className="share-form"
+    onSubmit={event => {
+      event.preventDefault()
+      handleShare(document)
+    }}
+  >
+    <label className="share-email-field">
+      Share document
+      <input
+        type="email"
+        value={shareEmails[document.id] || ''}
+        onChange={event =>
+          setShareEmails(current => ({
+            ...current,
+            [document.id]: event.target.value,
+          }))
+        }
+        placeholder="Enter recipient email"
+        required
+      />
+    </label>
+
+    <label className="share-edit-option">
+      <input
+        type="checkbox"
+        checked={Boolean(shareEditAccess[document.id])}
+        onChange={event =>
+          setShareEditAccess(current => ({
+            ...current,
+            [document.id]: event.target.checked,
+          }))
+        }
+      />
+      <span>Allow editing</span>
+    </label>
+
+    <button
+      className="button button-primary share-submit"
+      type="submit"
+      disabled={sharingDocumentId === document.id}
+    >
+      {sharingDocumentId === document.id
+        ? 'Sharing…'
+        : 'Share document'}
+    </button>
+
+    <button
+      className="button button-outline manage-access-button"
+      type="button"
+      onClick={() => {
+        if (permissionsVisible[document.id]) {
+          setPermissionsVisible(current => ({
+            ...current,
+            [document.id]: false,
+          }))
+        } else {
+          loadPermissions(document)
+        }
+      }}
+      disabled={permissionsLoadingId === document.id}
+    >
+      {permissionsLoadingId === document.id
+        ? 'Loading access…'
+        : permissionsVisible[document.id]
+          ? 'Hide permissions'
+          : 'Manage access'}
+    </button>
+  </form>
+</div>
+
+
+{permissionsVisible[document.id] && (
+  <div className="permission-list">
+    <div className="permission-list-heading">
+      <strong>Document permissions</strong>
+        <span>
+          {(permissionsByDocument[document.id] || [])
+            .filter(permission => !permission.revoked_at)
+            .length}{' '}
+          active
+        </span>
+      </div>
+
+                    {(permissionsByDocument[document.id] || []).length === 0 ? (
+                      <p className="permission-empty">
+                        No permission records returned.
+                      </p>
+                    ) : (
+                      (permissionsByDocument[document.id] || []).map(
+                        permission => {
+                          const isRevoked = Boolean(permission.revoked_at)
+
+                          return (
+                            <div
+                              className="permission-item"
+                              key={permission.id}
+                            >
+                              <div className="permission-user-icon">
+                                {permission.can_edit ? '✎' : '◉'}
+                              </div>
+
+                              <div className="permission-user-info">
+                                <strong>
+                                  User ID {permission.user_id}
+                                </strong>
+                                <p>
+                                  {permission.can_edit
+                                    ? 'Read and edit'
+                                    : 'Read only'}
+                                  {' · '}
+                                  {isRevoked ? 'Revoked' : 'Active'}
+                                </p>
+                              </div>
+
+                              {!isRevoked && (
+                                <button
+                                  className="button button-outline revoke-button"
+                                  type="button"
+                                  onClick={() =>
+                                    handleRevokePermission(
+                                      document,
+                                      permission
+                                    )
+                                  }
+                                  disabled={
+                                    revokingPermissionId === permission.id
+                                  }
+                                >
+                                  {revokingPermissionId === permission.id
+                                    ? 'Revoking…'
+                                    : 'Revoke access'}
+                                </button>
+                              )}
+                            </div>
+                          )
+                        }
+                      )
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </article>
+        )
+      })}
+    </div>
+    </>
+  )}
+</article>
               </>
             ) : (
               <article className="panel empty-state">
