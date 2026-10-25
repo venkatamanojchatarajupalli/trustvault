@@ -24,6 +24,8 @@ app.add_middleware(
         "http://localhost:5175",
         "http://127.0.0.1:5175",
         "https://trustvault-hrdv5ogvn-trust-vault1.vercel.app",
+        "https://trustvault-hrdv5ogvn-trust-vault1.vercel.app",
+        "https://trustvault-beta.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
