@@ -37,3 +37,4 @@ Thumbs.db
 
 # Private uploaded documents
 backend/private_uploads/
+.vercel
