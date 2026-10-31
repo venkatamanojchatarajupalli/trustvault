@@ -4,7 +4,7 @@ TrustVault is a secure document-sharing platform designed to protect private doc
 
 ## Live Demo
 
-- **Frontend:** https://trustvault-hrdv5ogvn-trust-vault1.vercel.app/
+- **Frontend:** https://trustvault-beta.vercel.app/
 - **Backend API:** https://trustvault-api-v92o.onrender.com
 - **API documentation:** https://trustvault-api-v92o.onrender.com/docs
 - **GitHub repository:** https://github.com/venkatamanojchatarajupalli/trustvault
